@@ -350,3 +350,28 @@
 
 1410585076 source:c:\users\zshandi\c++ projects\tic tac toe\resource.rc
 
+1584083791 source:c:\users\zshandi\c++ projects\tictactoe\capp.cpp
+	<windows.h>
+	"CApp.h"
+
+1584082547 c:\users\zshandi\c++ projects\tictactoe\capp.h
+	<SDL.h>
+	"Textures.h"
+	"ImageUtility.h"
+	"ComputerPlayer.h"
+	"RowChecker.h"
+
+1584657546 c:\users\zshandi\c++ projects\tictactoe\computerplayer.h
+	<random>
+	<chrono>
+	"RowChecker.h"
+	<iostream>
+
+1410572035 c:\users\zshandi\c++ projects\tictactoe\rowchecker.h
+	"Container.h"
+	<iostream>
+
+1410473954 c:\users\zshandi\c++ projects\tictactoe\container.h
+
+1410585076 source:c:\users\zshandi\c++ projects\tictactoe\resource.rc
+
