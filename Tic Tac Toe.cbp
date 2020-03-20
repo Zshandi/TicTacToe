@@ -44,7 +44,6 @@
 		<Unit filename="CApp.h" />
 		<Unit filename="ComputerPlayer.h" />
 		<Unit filename="Container.h" />
-		<Unit filename="ImageUtility.h" />
 		<Unit filename="RowChecker.h" />
 		<Unit filename="Texture.h" />
 		<Unit filename="resource.rc">
