@@ -122,10 +122,9 @@ bool CApp::OnInit(){
     SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
     SDL_Surface* temp = nullptr;
-    if(loadImage("gfx/smiley.bmp", &temp)){
+    if( temp = SDL_LoadBMP("gfx/smiley.bmp") ){
         SDL_SetWindowIcon(window, temp);
         SDL_FreeSurface(temp);
-        temp = nullptr;
     }
 
     graphic_grid = Texture(renderer, "gfx/grid.bmp");

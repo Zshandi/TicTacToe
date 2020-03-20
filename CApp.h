@@ -3,7 +3,6 @@
 
 #include <SDL.h>
 #include "Texture.h"
-#include "ImageUtility.h"
 #include "ComputerPlayer.h"
 #include "RowChecker.h"
 
