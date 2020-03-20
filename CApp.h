@@ -2,7 +2,7 @@
 #define CAPP_H_INCLUDED
 
 #include <SDL.h>
-#include "Textures.h"
+#include "Texture.h"
 #include "ImageUtility.h"
 #include "ComputerPlayer.h"
 #include "RowChecker.h"

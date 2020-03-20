@@ -40,13 +40,13 @@
 			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_Image" />
 			<Add directory="C:/mingw_dev_lib/lib" />
 		</Linker>
-		<Unit filename="../Common/ImageUtility.h" />
-		<Unit filename="../Common/Textures.h" />
 		<Unit filename="CApp.cpp" />
 		<Unit filename="CApp.h" />
 		<Unit filename="ComputerPlayer.h" />
 		<Unit filename="Container.h" />
+		<Unit filename="ImageUtility.h" />
 		<Unit filename="RowChecker.h" />
+		<Unit filename="Texture.h" />
 		<Unit filename="resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
