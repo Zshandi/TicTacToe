@@ -56,7 +56,7 @@ void CApp::newGame(){
 }
 
 void CApp::checkWin(){
-    for(int* combo : winCombos){
+    for(const int* combo : winCombos){
         if(grid[combo[0]] != 0 && grid[combo[0]] == grid[combo[1]] && grid[combo[1]] == grid[combo[2]]){
             int winner = grid[combo[0]];
             if(!gameOver) newGame();
