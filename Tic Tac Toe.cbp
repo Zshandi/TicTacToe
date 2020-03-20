@@ -50,6 +50,8 @@
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="src/CApp.cpp" />
+		<Unit filename="src/ComputerPlayer.cpp" />
+		<Unit filename="src/RowChecker.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
