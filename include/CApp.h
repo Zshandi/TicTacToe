@@ -47,17 +47,6 @@ public:
     //  (doesn't actually check anything, I need to rename it)
     void checkHistory();
 
-    // Very confusing(should be 3 functions):
-    // 1. If i is null(0) and x and y are not:
-    //      Sets values pointed by x and y to current mouse position
-    // 2. If x or y are null and i is not:
-    //      Sets value pointed by i to grid index of current mouse position
-    // 3. If none of i, x, or y are null:
-    //      Sets values pointed by x and y to be coordinates of grid space
-    //       with index of value pointed by i
-    // 4. Otherwise does nothing
-    void getPosition(int* i, int* x = 0, int* y = 0);
-
     // Called to start the apps execuition
     int OnExecute();
 

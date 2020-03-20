@@ -46,12 +46,14 @@
 		<Unit filename="include/Container.h" />
 		<Unit filename="include/RowChecker.h" />
 		<Unit filename="include/Texture.h" />
+		<Unit filename="include/utility.h" />
 		<Unit filename="resource/resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="src/CApp.cpp" />
 		<Unit filename="src/ComputerPlayer.cpp" />
 		<Unit filename="src/RowChecker.cpp" />
+		<Unit filename="src/utility.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

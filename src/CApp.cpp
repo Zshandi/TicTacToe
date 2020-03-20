@@ -1,4 +1,5 @@
 #include<windows.h>
+#include "utility.h"
 #include "CApp.h"
 #undef main
 using namespace std;
@@ -26,21 +27,6 @@ int CApp::OnExecute(){
     OnCleanup();
 
     return 0;
-}
-void CApp::getPosition(int* i, int* x, int* y){
-    if(x == 0 || y == 0){
-        if(i == 0) return;
-        int j=0,k=0;
-        x = &j;
-        y = &k;
-        SDL_GetMouseState(x, y);
-        *i = *x/200+*y/200*3;
-    }else if(i == 0){
-        SDL_GetMouseState(x, y);
-    }else{
-        *x = *i%3*200;
-        *y = *i/3*200;
-    }
 }
 
 void CApp::newGame(){
@@ -140,12 +126,13 @@ bool CApp::OnInit(){
 }
 
 void CApp::OnEvent(SDL_Event* event){
+    int i = 0;
     switch(event->type){
     case SDL_QUIT:
         running = false;
         break;
     case SDL_MOUSEMOTION:
-        int i; getPosition(&i);
+        i = getGridIndexForMouse();
         if(i >= 9 || i < 0)
             mouse_over = -1;
         if(i != mouse_over){
@@ -161,7 +148,7 @@ void CApp::OnEvent(SDL_Event* event){
         //Check that it was a left-click
         else if(event->button.button == SDL_BUTTON_LEFT){
             //Retrieve the current mouse-grid position
-            int i; getPosition(&i);
+            int i = getGridIndexForMouse();
             //if it was being pressed, set mouse-pressed and return
             if(event->type == SDL_MOUSEBUTTONDOWN){
                 mouse_pressed = i;
@@ -241,8 +228,8 @@ void CApp::OnRender(){
     graphic_grid.render();
     for(int i = 0; i < 9; i++){
         if(grid[i] == 0) continue;
-        int x, y;
-        getPosition(&i, &x, &y);
+        int x=0, y=0;
+        getScreenPosForGridIndex(i, x, y);
         if((grid[i] == 1) != reversedGraphic){
             graphic_x.render(x, y);
         }else{
@@ -250,8 +237,8 @@ void CApp::OnRender(){
         }
     }
     if(mouse_over != -1 && grid[mouse_over] == 0 && !gameOver){
-        int x, y;
-        getPosition(&mouse_over, &x, &y);
+        int x=0, y=0;
+        getScreenPosForGridIndex(mouse_over, x, y);
         if((turn == 1) != reversedGraphic){
             graphic_x.setAlpha(255/2);
             graphic_x.render(x, y);
