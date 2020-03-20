@@ -16,6 +16,7 @@
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-I include/" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -40,15 +41,15 @@
 			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_Image" />
 			<Add directory="C:/mingw_dev_lib/lib" />
 		</Linker>
-		<Unit filename="CApp.cpp" />
-		<Unit filename="CApp.h" />
-		<Unit filename="ComputerPlayer.h" />
-		<Unit filename="Container.h" />
-		<Unit filename="RowChecker.h" />
-		<Unit filename="Texture.h" />
-		<Unit filename="resource.rc">
+		<Unit filename="include/CApp.h" />
+		<Unit filename="include/ComputerPlayer.h" />
+		<Unit filename="include/Container.h" />
+		<Unit filename="include/RowChecker.h" />
+		<Unit filename="include/Texture.h" />
+		<Unit filename="resource/resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
+		<Unit filename="src/CApp.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
