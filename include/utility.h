@@ -3,13 +3,14 @@
 
 #define GRID_PIXEL_SIZE 200
 #define GRID_SIZE 3
+namespace utility{
+    int getGridIndexForScreenPos(int x, int y);
 
-int getGridIndexForScreenPos(int x, int y);
+    void getScreenPosForGridIndex(int index, int& x, int& y);
 
-void getScreenPosForGridIndex(int index, int& x, int& y);
+    void getMousePosition(int& x, int& y);
 
-void getMousePosition(int& x, int& y);
-
-int getGridIndexForMouse();
+    int getGridIndexForMouse();
+}
 
 #endif // UTILITY_H_INCLUDED

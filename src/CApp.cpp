@@ -132,7 +132,7 @@ void CApp::OnEvent(SDL_Event* event){
         running = false;
         break;
     case SDL_MOUSEMOTION:
-        i = getGridIndexForMouse();
+        i = utility::getGridIndexForMouse();
         if(i >= 9 || i < 0)
             mouse_over = -1;
         if(i != mouse_over){
@@ -148,7 +148,7 @@ void CApp::OnEvent(SDL_Event* event){
         //Check that it was a left-click
         else if(event->button.button == SDL_BUTTON_LEFT){
             //Retrieve the current mouse-grid position
-            int i = getGridIndexForMouse();
+            int i = utility::getGridIndexForMouse();
             //if it was being pressed, set mouse-pressed and return
             if(event->type == SDL_MOUSEBUTTONDOWN){
                 mouse_pressed = i;
@@ -229,7 +229,7 @@ void CApp::OnRender(){
     for(int i = 0; i < 9; i++){
         if(grid[i] == 0) continue;
         int x=0, y=0;
-        getScreenPosForGridIndex(i, x, y);
+        utility::getScreenPosForGridIndex(i, x, y);
         if((grid[i] == 1) != reversedGraphic){
             graphic_x.render(x, y);
         }else{
@@ -238,7 +238,7 @@ void CApp::OnRender(){
     }
     if(mouse_over != -1 && grid[mouse_over] == 0 && !gameOver){
         int x=0, y=0;
-        getScreenPosForGridIndex(mouse_over, x, y);
+        utility::getScreenPosForGridIndex(mouse_over, x, y);
         if((turn == 1) != reversedGraphic){
             graphic_x.setAlpha(255/2);
             graphic_x.render(x, y);
