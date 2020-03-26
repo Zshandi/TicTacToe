@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "ComputerPlayer.h"
 #include "RowChecker.h"
+#include "Grid.h"
 
 class CApp{
 private:
@@ -16,7 +17,6 @@ private:
     Texture graphic_x;
     Texture graphic_o;
 
-    int grid[9];
     int turn = 1;
     int mouse_pressed;
     int mouse_over = -1;

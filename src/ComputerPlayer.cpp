@@ -15,7 +15,7 @@ int randomMove(int max_v){
     return distribution(engine);
 }
 
-int RandomAI::getNextMove(int* grid){
+int RandomAI::getNextMove(Grid& grid){
     int i = randomMove(8);
     while(grid[i] != 0)
     {
@@ -24,7 +24,7 @@ int RandomAI::getNextMove(int* grid){
     return i;
 }
 
-int SimpleAI::getNextMove(int* grid)
+int SimpleAI::getNextMove(Grid& grid)
 {
 #ifdef BUILD_DEBUG
     cout << "Selecting move";

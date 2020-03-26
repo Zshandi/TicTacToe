@@ -15,7 +15,7 @@ void row::add(int i){
     value[num] = i;
     num++;
 }
-Container<row> checkRows(int* grid, int player, int level)
+Container<row> checkRows(Grid& grid, int player, int level)
 {
     Container<row> result;
     for(int* combo : rows)

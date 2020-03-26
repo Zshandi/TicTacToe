@@ -2,6 +2,7 @@
 #define ROWCHECKER_H_INCLUDED
 #include "Container.h"
 #include <iostream>
+#include "Grid.h"
 
 struct row{
     int value[3];
@@ -10,6 +11,6 @@ struct row{
     row(int first);
     void add(int i);
 };
-Container<row> checkRows(int* grid, int player, int level);
+Container<row> checkRows(Grid& grid, int player, int level);
 
 #endif // ROWCHECKER_H_INCLUDED
