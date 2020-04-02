@@ -11,6 +11,6 @@ struct row{
     row(int first);
     void add(int i);
 };
-Container<row> checkRows(Grid& grid, int player, int level);
+Container<row> checkRows(int* grid, int player, int level);
 
 #endif // ROWCHECKER_H_INCLUDED

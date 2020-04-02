@@ -7,9 +7,12 @@ using namespace std;
 const int winCombos[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
 
 int CApp::OnExecute(){
+    player = new HumanPlayer();
+
     if(OnInit() == false){
         return -1;
     }
+
 
     SDL_Event event;
 
@@ -32,20 +35,68 @@ int CApp::OnExecute(){
 void CApp::newGame(){
     for(int i = 0; i < 9; i++){
         grid[i] = 0;
-        history[i] = -1;
+        history[i] = GRID_POS_NONE;
     }
     moves = 0;
     gameOver = false;
+
     turn = reversed+1;
+    currentGridIndex = GRID_POS_NONE;
+    previousGridIndex = GRID_POS_NONE;
+    shouldWaitForEvent = false;
 
     render = true;
+    //player->initGame(0,false);
+    startNextTurn();
+}
+
+// Finishes up the current turn
+void CApp::finishCurrentTurn(){
+    grid[currentGridIndex] = turn;
+    turn = switchTurn(turn);
+
+    render = true;
+
+    history[moves] = currentGridIndex;
+    moves++;
+    checkHistory();
+
+    checkWin();
+    if(!gameOver){
+        startNextTurn();
+    }
+}
+
+// Starts the next turn
+void CApp::startNextTurn(){
+    player->getNextMove( currentGridIndex, shouldWaitForEvent,
+                        (moves==0 ? GRID_POS_NONE : history[moves-1]), utility::getGridIndexForMouse() );
+    if( !shouldWaitForEvent ){
+        if(grid[currentGridIndex] == 0){
+            grid[currentGridIndex] = turn;
+            turn = switchTurn(turn);
+
+            render = true;
+
+            history[moves] = currentGridIndex;
+            moves++;
+            checkHistory();
+            if(currentGridIndex != previousGridIndex){
+                render = true;
+            }
+        }else{
+            shouldWaitForEvent = true;
+        }
+    }
 }
 
 void CApp::checkWin(){
     for(const int* combo : winCombos){
         if(grid[combo[0]] != 0 && grid[combo[0]] == grid[combo[1]] && grid[combo[1]] == grid[combo[2]]){
             int winner = grid[combo[0]];
-            if(!gameOver) newGame();
+            for(int i = 0; i < GRID_SIZE; i++){
+                grid[i] = 0;
+            }
             grid[combo[0]] = winner;
             grid[combo[1]] = winner;
             grid[combo[2]] = winner;
@@ -127,46 +178,10 @@ bool CApp::OnInit(){
 
 void CApp::OnEvent(SDL_Event* event){
     int i = 0;
+
     switch(event->type){
     case SDL_QUIT:
         running = false;
-        break;
-    case SDL_MOUSEMOTION:
-        i = utility::getGridIndexForMouse();
-        if(i >= 9 || i < 0)
-            mouse_over = -1;
-        if(i != mouse_over){
-            mouse_over = i;
-            render = true;
-        }
-        break;
-    case SDL_MOUSEBUTTONUP: case SDL_MOUSEBUTTONDOWN:
-        //if the game has ended, start a new one
-        if(gameOver){
-            newGame();
-        }
-        //Check that it was a left-click
-        else if(event->button.button == SDL_BUTTON_LEFT){
-            //Retrieve the current mouse-grid position
-            int i = utility::getGridIndexForMouse();
-            //if it was being pressed, set mouse-pressed and return
-            if(event->type == SDL_MOUSEBUTTONDOWN){
-                mouse_pressed = i;
-                break;
-            }
-
-            //Check the grid space is empty, and the mouse wasn't moved from another square
-            if(grid[i] == 0 && i == mouse_pressed){
-                grid[i] = turn;
-                turn = switchTurn(turn);
-
-                render = true;
-
-                history[moves] = i;
-                moves++;
-                checkHistory();
-            }
-        }
         break;
     case SDL_KEYDOWN:
         if(!gameOver){
@@ -184,38 +199,52 @@ void CApp::OnEvent(SDL_Event* event){
                         redo();
                 }
             }
-            //Turn computer player on/off
-            if(event->key.keysym.sym == SDLK_F1){
-                computer = !computer;
-                newGame();
-            }else if(event->key.keysym.sym == SDLK_F2){
-                reversed = !reversed;
-                newGame();
-            }else if(event->key.keysym.sym == SDLK_F3){
-                reversedGraphic = !reversedGraphic;
-                render = true;
+        }
+        //Turn computer player on/off
+        if(event->key.keysym.sym == SDLK_F1){
+            computer = !computer;
+            newGame();
+            return;
+        }else if(event->key.keysym.sym == SDLK_F2){
+            reversed = !reversed;
+            newGame();
+            return;
+        }else if(event->key.keysym.sym == SDLK_F3){
+            reversedGraphic = !reversedGraphic;
+            render = true;
+        }
+        // Allow player to quit the game by closing the window
+        else if(event->key.keysym.sym == SDLK_ESCAPE){
+            newGame();
+            return;
+        }
+
+    default:
+        if( !shouldWaitForEvent ) break;
+        player->getNextMoveOnEvent( currentGridIndex, shouldWaitForEvent,
+                        (moves==0 ? GRID_POS_NONE : history[moves-1]), utility::getGridIndexForMouse(), event );
+        if(currentGridIndex != previousGridIndex){
+            render = true;
+            previousGridIndex = currentGridIndex;
+        }
+        if( !shouldWaitForEvent ){
+            if(grid[currentGridIndex] == 0){
+                finishCurrentTurn();
+            }else{
+                shouldWaitForEvent = true;
             }
         }
-        if(event->key.keysym.sym == SDLK_ESCAPE){
-            newGame();
-        }
-        break;
     }
 }
 
 void CApp::OnLoop(){
-    checkWin();
-    if(!gameOver && computer && turn == 2){
-        int compMove = SimpleAI().getNextMove(grid);
-        if(grid[compMove] == 0){
-            grid[compMove] = 2;
-            checkWin();
-            render = true;
-            turn = 1;
-
-            history[moves] = compMove;
-            moves++;
-            checkHistory();
+    if(!gameOver){
+        if(computer && turn == 2){
+            int compMove = SimpleAI().getNextMove(grid);
+            if(grid[compMove] == 0){
+                currentGridIndex = compMove;
+                finishCurrentTurn();
+            }
         }
     }
 }
@@ -236,9 +265,9 @@ void CApp::OnRender(){
             graphic_o.render(x, y);
         }
     }
-    if(mouse_over != -1 && grid[mouse_over] == 0 && !gameOver){
+    if(currentGridIndex != GRID_POS_NONE && grid[currentGridIndex] == 0 && !gameOver){
         int x=0, y=0;
-        utility::getScreenPosForGridIndex(mouse_over, x, y);
+        utility::getScreenPosForGridIndex(currentGridIndex, x, y);
         if((turn == 1) != reversedGraphic){
             graphic_x.setAlpha(255/2);
             graphic_x.render(x, y);
@@ -269,6 +298,7 @@ void CApp::OnCleanup(){
 }
 
 int main(){
+
     CApp theApp;
     return theApp.OnExecute();
 }

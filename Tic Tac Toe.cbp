@@ -16,9 +16,9 @@
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-I include/" />
 					<Add option="-DBUILD_DEBUG" />
 					<Add directory="include" />
+					<Add directory="src" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -38,7 +38,6 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add directory="C:/mingw_dev_lib/include/SDL2" />
-			<Add directory="../Common" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_Image" />
@@ -48,6 +47,8 @@
 		<Unit filename="include/ComputerPlayer.h" />
 		<Unit filename="include/Container.h" />
 		<Unit filename="include/Grid.h" />
+		<Unit filename="include/HumanPlayer.h" />
+		<Unit filename="include/Player.h" />
 		<Unit filename="include/RowChecker.h" />
 		<Unit filename="include/Texture.h" />
 		<Unit filename="include/utility.h" />

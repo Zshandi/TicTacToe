@@ -8,7 +8,7 @@
 
 class AI{
 public:
-    virtual int getNextMove(Grid& grid) = 0;
+    virtual int getNextMove(int* grid) = 0;
 };
 
 
@@ -16,12 +16,12 @@ int randomMove(int max_v);
 
 class RandomAI : public AI{
 public:
-    int getNextMove(Grid& grid);
+    int getNextMove(int* grid);
 };
 
 class SimpleAI : public AI{
 public:
-    int getNextMove(Grid& grid);
+    int getNextMove(int* grid);
 };
 
 /*class SimpleComputerPlayer : public Player{

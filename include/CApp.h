@@ -5,37 +5,57 @@
 #include "Texture.h"
 #include "ComputerPlayer.h"
 #include "RowChecker.h"
-#include "Grid.h"
+#include "HumanPlayer.h"
+#include "utility.h"
 
 class CApp{
-private:
+//private:
+public:
+    // Whether the app should close
     bool running = true;
 
+    // SDL resource variables
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
     Texture graphic_grid;
     Texture graphic_x;
     Texture graphic_o;
 
-    int turn = 1;
-    int mouse_pressed;
-    int mouse_over = -1;
+    // The current grid states
+    int grid[GRID_SIZE];
 
-    int history[9];
+    // The state of the current game moves
+    int turn;
+    int currentGridIndex;
+    int previousGridIndex;
+    bool shouldWaitForEvent;
+
+    // History state
+    int history[GRID_SIZE];
     int moves = 0;
 
+    // Various settings
     bool computer = false;
     bool reversed = false;
     bool reversedGraphic = false;
 
+    // Whether the game has finished
     bool gameOver = false;
 
+    // Whether the render function should be called
     bool render = true;
-public:
+
+    // The player
+    HumanPlayer* player;
+//public:
     // Starts a new game
     void newGame();
     // Checks the current state for win conditions
     void checkWin();
+    // Finishes up the current turn
+    void finishCurrentTurn();
+    // Starts the next turn
+    void startNextTurn();
     // Gets the next turn (player 1 or player 2) based on the current turn
     int switchTurn(int turn);
 
