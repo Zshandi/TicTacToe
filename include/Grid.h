@@ -1,8 +1,6 @@
 #ifndef GRID_H_INCLUDED
 #define GRID_H_INCLUDED
 
-#include "utility.h"
-
 #include <vector>
 
 class Grid{
@@ -18,7 +16,7 @@ public:
     };
 
     // Initialize grid with specified initial values and dimension
-    Grid(int init = 0, int dimension = GRID_SIZE);
+    Grid(int init = 0, int dimension = 3);
 
     // Sets all values to specified value
     void setAllValues(int val = 0);
@@ -45,7 +43,9 @@ public:
     void debugDisplay();
 
 private:
+    public: // TEMP
     int * values;
+    private: // TEMP
     int size;
     int dimension;
 

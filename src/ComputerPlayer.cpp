@@ -8,6 +8,70 @@
 #endif // BUILD_DEBUG
 using namespace std;
 
+
+// Initialize the current game with the given oponent, and whether they go first
+void ComputerPlayer::initGame(Player* oponent, bool oponentHasFirstMove){
+    this->oponent = oponent;
+    this->isOponentFirst = oponentHasFirstMove;
+    grid.setAllValues();
+}
+
+// Get the next move with the given data
+// currentGridIndex should be set to the index to be chosen
+// If waitForEvent is set to true, then getNextMoveOnEvent will be called
+//  the next time an event is fired
+//  This also means that currentGridIndex will be highlighted, not selected
+// lastOponentGridIndex is the index of the last oponent move
+// mouseGridIndex is the index of the grid space the mouse is currently over
+// event is the SDL_Event which triggered this call
+void ComputerPlayer::getNextMoveOnEvent(int& currentGridIndex, bool& waitForEvent,
+                         int lastOponentGridIndex, int mouseGridIndex,
+                         SDL_Event* event){
+    if(currentGridIndex == GRID_POS_NONE){
+        getNextMove(currentGridIndex, waitForEvent, lastOponentGridIndex, mouseGridIndex);
+    }else{
+        // TODO Have timer checking
+        waitForEvent = false;
+    }
+ }
+
+// Called when the user executes an "undo" so as to reset the state of the "player"
+void ComputerPlayer::undo(int lastTurn){
+    grid[lastTurn] = 0;
+}
+
+bool ComputerPlayer::isHuman(){ return false; }
+
+// Adds the oponent move to the current grid data
+void ComputerPlayer::processOponentMove(int gridIndex){
+    if(gridIndex == GRID_POS_NONE) return;
+    grid[gridIndex] = GRID_VAL_OPONENT;
+}
+
+// Determines if there is an obvious course of action to take
+//  (Either to win, or to prevent oponent from winning)
+// If there is, sets hasObviousMove to true and obviousMoveIndex to the grid index
+//  also returns whether or not it will be a winning move
+bool ComputerPlayer::getObviousMove(bool& hasObviousMove, int &obviousMoveIndex){
+    return false;
+}
+
+// Get the next move with the given data
+// currentGridIndex should be set to the index to be chosen
+// If waitForEvent is set to true, then getNextMoveOnEvent will be called
+//  the next time an event is fired
+//  This also means that currentGridIndex will be highlighted, not selected
+// lastOponentGridIndex is the index of the last oponent move
+// mouseGridIndex is the index of the grid space the mouse is currently over
+void RowComputerPlayer::getNextMove(int& currentGridIndex, bool& waitForEvent,
+                         int lastOponentGridIndex, int mouseGridIndex){
+    processOponentMove(lastOponentGridIndex);
+    grid.debugDisplay();
+    currentGridIndex = SimpleAI().getNextMove(grid.values);
+    grid[currentGridIndex] = GRID_VAL_SELF;
+    waitForEvent = false;
+}
+
 int randomMove(int max_v){
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine engine(seed);

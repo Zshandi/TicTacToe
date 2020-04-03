@@ -10,6 +10,8 @@
 #define GRID_POS_MIN 0
 #define GRID_POS_MAX GRID_SIZE-1
 
+#define GRID_VAL_NONE -1
+
 namespace utility{
     int getGridIndexForScreenPos(int x, int y);
 

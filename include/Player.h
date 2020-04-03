@@ -33,9 +33,11 @@ public:
                              int lastOponentGridIndex, int mouseGridIndex,
                              SDL_Event* event) = 0;
 
+    // Called when the user executes an "undo" so as to reset the state of the "player"
+    virtual void undo(int lastTurn);
+
     virtual bool isHuman() = 0;
     virtual bool isComputer();
-
 };
 
 #endif // PLAYER_H_INCLUDED

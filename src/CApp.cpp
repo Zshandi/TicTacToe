@@ -7,7 +7,6 @@ using namespace std;
 const int winCombos[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
 
 int CApp::OnExecute(){
-    player = new HumanPlayer();
 
     if(OnInit() == false){
         return -1;
@@ -34,32 +33,32 @@ int CApp::OnExecute(){
 
 void CApp::newGame(){
     for(int i = 0; i < 9; i++){
-        grid[i] = 0;
-        history[i] = GRID_POS_NONE;
+        grid[i] = GRID_VAL_NONE;
     }
-    moves = 0;
+    history.clear();
     gameOver = false;
 
-    turn = reversed+1;
+    currentPlayer = 0;
+
     currentGridIndex = GRID_POS_NONE;
     previousGridIndex = GRID_POS_NONE;
     shouldWaitForEvent = false;
 
     render = true;
-    //player->initGame(0,false);
+    playerData[0]->player->initGame(playerData[1]->player,false);
+    playerData[1]->player->initGame(playerData[0]->player,true);
     startNextTurn();
 }
 
 // Finishes up the current turn
 void CApp::finishCurrentTurn(){
-    grid[currentGridIndex] = turn;
-    turn = switchTurn(turn);
+    grid[currentGridIndex] = currentPlayer;
+
+    currentPlayer = !currentPlayer;
 
     render = true;
 
-    history[moves] = currentGridIndex;
-    moves++;
-    checkHistory();
+    history.push_back(currentGridIndex);
 
     checkWin();
     if(!gameOver){
@@ -69,21 +68,15 @@ void CApp::finishCurrentTurn(){
 
 // Starts the next turn
 void CApp::startNextTurn(){
-    player->getNextMove( currentGridIndex, shouldWaitForEvent,
-                        (moves==0 ? GRID_POS_NONE : history[moves-1]), utility::getGridIndexForMouse() );
+    currentGridIndex = GRID_POS_NONE;
+    shouldWaitForEvent = false;
+
+    playerData[currentPlayer]->player->getNextMove( currentGridIndex, shouldWaitForEvent,
+                        history.empty() ? GRID_POS_NONE:history.back(), utility::getGridIndexForMouse() );
+
     if( !shouldWaitForEvent ){
-        if(grid[currentGridIndex] == 0){
-            grid[currentGridIndex] = turn;
-            turn = switchTurn(turn);
-
-            render = true;
-
-            history[moves] = currentGridIndex;
-            moves++;
-            checkHistory();
-            if(currentGridIndex != previousGridIndex){
-                render = true;
-            }
+        if(grid[currentGridIndex] == GRID_VAL_NONE){
+            finishCurrentTurn();
         }else{
             shouldWaitForEvent = true;
         }
@@ -92,10 +85,10 @@ void CApp::startNextTurn(){
 
 void CApp::checkWin(){
     for(const int* combo : winCombos){
-        if(grid[combo[0]] != 0 && grid[combo[0]] == grid[combo[1]] && grid[combo[1]] == grid[combo[2]]){
+        if(grid[combo[0]] != GRID_VAL_NONE && grid[combo[0]] == grid[combo[1]] && grid[combo[1]] == grid[combo[2]]){
             int winner = grid[combo[0]];
             for(int i = 0; i < GRID_SIZE; i++){
-                grid[i] = 0;
+                grid[i] = GRID_VAL_NONE;
             }
             grid[combo[0]] = winner;
             grid[combo[1]] = winner;
@@ -106,7 +99,7 @@ void CApp::checkWin(){
     if(!gameOver){
         gameOver = true;
         for(int i = 0; i < 9; i++){
-            if(grid[i] == 0){
+            if(grid[i] == GRID_VAL_NONE){
                 gameOver = false;
                 break;
             }
@@ -119,28 +112,22 @@ int CApp::switchTurn(int turn){
 }
 
 void CApp::undo(){
-    if(moves == 0) return;
-    moves--;
-    if(history[moves] == -1) return;
-    grid[history[moves]] = 0;
-    turn = switchTurn(turn);
+    if(history.empty()) return;
+
+    int lastMove = history.back();
+    history.pop_back();
+
+    grid[lastMove] = GRID_VAL_NONE;
+    playerData[0]->player->undo(lastMove);
+    playerData[1]->player->undo(lastMove);
+
+    currentPlayer = !currentPlayer;
 
     render = true;
-}
 
-void CApp::redo(){
-    if(history[moves] != -1){
-        grid[history[moves]] = turn;
-        moves++;
-        turn = switchTurn(turn);
-
-        render = true;
-    }
-}
-
-void CApp::checkHistory(){
-    for(int i = moves; i < 9; i++){
-        history[i] = -1;
+    if( playerData[currentPlayer]->player->isComputer() &&
+        playerData[!currentPlayer]->player->isHuman() ){
+        undo();
     }
 }
 
@@ -172,6 +159,15 @@ bool CApp::OnInit(){
         return false;
     }
 
+    playerData[0] = new PlayerData();
+    playerData[1] = new PlayerData();
+
+    playerData[0]->graphic = &graphic_x;
+    playerData[1]->graphic = &graphic_o;
+
+    playerData[0]->player = new HumanPlayer();
+    playerData[1]->player = new HumanPlayer();
+
     newGame();
     return true;
 }
@@ -186,31 +182,33 @@ void CApp::OnEvent(SDL_Event* event){
     case SDL_KEYDOWN:
         if(!gameOver){
             if(event->key.keysym.mod & KMOD_CTRL){
-                //CTRL+Z and CTRL+Y undo and redo
+                //CTRL+Z undo
                 if(event->key.keysym.sym == SDLK_z){
-                    if(moves == 1 && computer && reversed)
-                        return;
                     undo();
-                    if(computer)
-                        undo();
-                }else if(event->key.keysym.sym == SDLK_y){
-                    redo();
-                    if(computer)
-                        redo();
                 }
             }
         }
         //Turn computer player on/off
         if(event->key.keysym.sym == SDLK_F1){
-            computer = !computer;
+            if( playerData[1]->player->isComputer() ){
+                delete playerData[1]->player;
+                playerData[1]->player = new HumanPlayer();
+            }else{
+                delete playerData[1]->player;
+                playerData[1]->player = new RowComputerPlayer();
+            }
             newGame();
             return;
         }else if(event->key.keysym.sym == SDLK_F2){
-            reversed = !reversed;
+            PlayerData* temp = playerData[0];
+            playerData[0] = playerData[1];
+            playerData[1] = temp;
             newGame();
             return;
         }else if(event->key.keysym.sym == SDLK_F3){
-            reversedGraphic = !reversedGraphic;
+            Texture* temp = playerData[0]->graphic;
+            playerData[0]->graphic = playerData[1]->graphic;
+            playerData[1]->graphic = temp;
             render = true;
         }
         // Allow player to quit the game by closing the window
@@ -221,14 +219,14 @@ void CApp::OnEvent(SDL_Event* event){
 
     default:
         if( !shouldWaitForEvent ) break;
-        player->getNextMoveOnEvent( currentGridIndex, shouldWaitForEvent,
-                        (moves==0 ? GRID_POS_NONE : history[moves-1]), utility::getGridIndexForMouse(), event );
+        playerData[currentPlayer]->player->getNextMoveOnEvent( currentGridIndex, shouldWaitForEvent,
+                        history.empty() ? GRID_POS_NONE:history.back(), utility::getGridIndexForMouse(), event );
         if(currentGridIndex != previousGridIndex){
             render = true;
             previousGridIndex = currentGridIndex;
         }
         if( !shouldWaitForEvent ){
-            if(grid[currentGridIndex] == 0){
+            if(grid[currentGridIndex] == GRID_VAL_NONE){
                 finishCurrentTurn();
             }else{
                 shouldWaitForEvent = true;
@@ -238,15 +236,7 @@ void CApp::OnEvent(SDL_Event* event){
 }
 
 void CApp::OnLoop(){
-    if(!gameOver){
-        if(computer && turn == 2){
-            int compMove = SimpleAI().getNextMove(grid);
-            if(grid[compMove] == 0){
-                currentGridIndex = compMove;
-                finishCurrentTurn();
-            }
-        }
-    }
+
 }
 
 void CApp::OnRender(){
@@ -256,27 +246,19 @@ void CApp::OnRender(){
 
     graphic_grid.render();
     for(int i = 0; i < 9; i++){
-        if(grid[i] == 0) continue;
+        if(grid[i] == GRID_VAL_NONE) continue;
         int x=0, y=0;
         utility::getScreenPosForGridIndex(i, x, y);
-        if((grid[i] == 1) != reversedGraphic){
-            graphic_x.render(x, y);
-        }else{
-            graphic_o.render(x, y);
-        }
+
+        playerData[ grid[i] ]->graphic->render(x, y);
     }
-    if(currentGridIndex != GRID_POS_NONE && grid[currentGridIndex] == 0 && !gameOver){
+    if(currentGridIndex != GRID_POS_NONE && grid[currentGridIndex] == GRID_VAL_NONE && !gameOver){
         int x=0, y=0;
         utility::getScreenPosForGridIndex(currentGridIndex, x, y);
-        if((turn == 1) != reversedGraphic){
-            graphic_x.setAlpha(255/2);
-            graphic_x.render(x, y);
-            graphic_x.setAlpha(255);
-        }else{
-            graphic_o.setAlpha(255/2);
-            graphic_o.render(x, y);
-            graphic_o.setAlpha(255);
-        }
+
+        playerData[currentPlayer]->graphic->setAlpha(255/2);
+        playerData[currentPlayer]->graphic->render(x, y);
+        playerData[currentPlayer]->graphic->setAlpha(255);
     }
 
     SDL_RenderPresent(renderer);
