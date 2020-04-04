@@ -14,14 +14,37 @@ void Grid::indexToXy(int index, int& x, int& y){
     y = index/dimension;
 }
 
-Grid::Line::Line(int index, int offset, int* values) :
-    index(index), offset(offset), values(values){ }
+Grid::Line::Line(int index, int offset, int* values, int maxValue) :
+    index(index), offset(offset), values(values){
+    valueCount = new int[maxValue+1];
+    for(int i = 0; i <= maxValue; i++){
+        valueCount[i] = 0;
+    }
+}
 
-int& Grid::Line::operator [] (int lineIndex) const{
+int Grid::Line::operator [] (int lineIndex) const{
     return values[ indexOf(lineIndex) ];
 }
 int Grid::Line::indexOf(int lineIndex) const{
     return index + offset*lineIndex;
+}
+
+int Grid::Line::getValueCount(int value) const{
+    return valueCount[value];
+}
+
+void Grid::Line::updateValueCount(int oldValue, int newValue){
+    if(oldValue != newValue){
+        valueCount[ oldValue ] --;
+        valueCount[ newValue ] ++;
+    }
+}
+
+void Grid::Line::resetValueCount(int value, int dimension, int maxValue){
+    for(int i = 0; i <= maxValue; i++){
+        valueCount[i] = 0;
+    }
+    valueCount[value] = dimension;
 }
 
 // Initialize grid with specified initial values and dimension
@@ -30,6 +53,15 @@ Grid::Grid(int init, int dimension){
     size = dimension*dimension;
     values = new int[size];
     initAllLines();
+
+    // Init the value lines
+    valueLines = new vector<int>[size];
+    for(int i = 0; i < lines.size(); i++){
+        for(int j = 0; j < dimension; j++){
+            int index = lines[i].indexOf(j);
+            valueLines[index].push_back(i);
+        }
+    }
     setAllValues(init);
 }
 // Sets all values to specified value
@@ -37,14 +69,28 @@ void Grid::setAllValues(int val){
     for(int i = 0; i < size; i++){
         values[i] = val;
     }
+    for(int i = 0; i < lines.size(); i++){
+        lines[i].resetValueCount(val, dimension);
+    }
+}
+
+// Sets the given index to the given value
+void Grid::set(int index, int value){
+    if(index >= 0 && index < size){
+        for(int i = 0; i < valueLines[index].size(); i++){
+            int lineIndex = valueLines[index][i];
+            lines[lineIndex].updateValueCount(values[index], value);
+        }
+        values[index] = value;
+    }
 }
 
 // Get value at specified index (between 0 and size)
-int& Grid::operator [] (int index){
+int Grid::operator [] (int index){
     return values[index];
 }
 // Get value at specified x/y coordinate
-int& Grid::operator () (int x, int y){
+int Grid::operator () (int x, int y){
     return values[ xyToIndex(x,y) ];
 }
 
@@ -88,10 +134,23 @@ const vector<Grid::Line>& Grid::getAllLines(){
 
 // Debug display
 void Grid::debugDisplay(){
-    cout << "Grid (size = " << size << ")" << endl;
+    cout << "Grid:" << endl;
     for(int i = 0; i < size; i++){
         cout << " " << values[i];
         if( (i+1)%dimension == 0 )
             cout << endl;
+    }
+    cout << "Lines:" << endl;
+    for(int i = 0; i < lines.size(); i++){
+        // Output the line data:
+        cout << "( ";
+        for(int j = 0; j < dimension; j++){
+            cout << lines[i].indexOf(j) << " ";
+        }
+        cout << "): ";
+        for(int j = 0; j <= 2; j++){
+            cout << "valueCount["<<j<<"]"<<" = "<<lines[i].getValueCount(j)<<", ";
+        }
+        cout << endl;
     }
 }

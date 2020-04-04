@@ -1,5 +1,6 @@
 #include<windows.h>
 #include "utility.h"
+#include "RandomComputerPlayer.h"
 #include "CApp.h"
 #undef main
 using namespace std;
@@ -197,7 +198,7 @@ void CApp::OnEvent(SDL_Event* event){
                 playerData[1]->player = new HumanPlayer();
             }else{
                 delete playerData[1]->player;
-                playerData[1]->player = new RowComputerPlayer();
+                playerData[1]->player = new RandomComputerPlayer();
             }
             newGame();
             return;

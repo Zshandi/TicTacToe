@@ -31,7 +31,7 @@ void ComputerPlayer::getNextMoveOnEvent(int& currentGridIndex, bool& waitForEven
         // This shouldn't happen
         getNextMove(currentGridIndex, waitForEvent, lastOponentGridIndex, mouseGridIndex);
     }else if(event->type == SDL_USEREVENT){
-        grid[currentGridIndex] = GRID_VAL_SELF;
+        grid.set(currentGridIndex, GRID_VAL_SELF);
         waitForEvent = false;
         timerID = 0;
     }else{
@@ -41,7 +41,8 @@ void ComputerPlayer::getNextMoveOnEvent(int& currentGridIndex, bool& waitForEven
 
 // Called when the user executes an "undo" so as to reset the state of the "player"
 void ComputerPlayer::undo(int lastTurn){
-    grid[lastTurn] = 0;
+    cout << "Undo move at " << lastTurn << " with value " << grid[lastTurn] << endl;
+    grid.set(lastTurn, 0);
     if(timerID != 0){
         SDL_RemoveTimer(timerID);
         timerID = 0;
@@ -53,7 +54,7 @@ bool ComputerPlayer::isHuman(){ return false; }
 // Adds the oponent move to the current grid data
 void ComputerPlayer::processOponentMove(int gridIndex){
     if(gridIndex == GRID_POS_NONE) return;
-    grid[gridIndex] = GRID_VAL_OPONENT;
+    grid.set(gridIndex, GRID_VAL_OPONENT);
 }
 
 // Determines if there is an obvious course of action to take
@@ -61,6 +62,58 @@ void ComputerPlayer::processOponentMove(int gridIndex){
 // If there is, sets hasObviousMove to true and obviousMoveIndex to the grid index
 //  also returns whether or not it will be a winning move
 bool ComputerPlayer::getObviousMove(bool& hasObviousMove, int &obviousMoveIndex){
+
+    // First, check if there is only one space
+    int openSpace = GRID_POS_NONE;
+    for(int i = 0; i < grid.getSize(); i++){
+        if(grid[i] == 0){
+            if(openSpace == GRID_POS_NONE){
+                openSpace = i;
+            }else{
+                openSpace = GRID_POS_NONE;
+                break;
+            }
+        }
+    }
+    if(openSpace != GRID_POS_NONE){
+        hasObviousMove = true;
+        obviousMoveIndex = openSpace;
+        return false;
+    }
+
+    // Then check if oponent or self have winning move
+    //  Self takes priority
+    const vector<Grid::Line>& lines = grid.getAllLines();
+
+    int oponentWin = GRID_POS_NONE;
+    for(int i = 0; i < lines.size(); i++){
+        if(lines[i].getValueCount(0) != 1) continue;
+
+        if(lines[i].getValueCount(GRID_VAL_SELF) == 2){
+            for(int j = 0; j < grid.getDimension(); j++){
+                if( lines[i][j] == 0 ){
+                    obviousMoveIndex = lines[i].indexOf(j);
+                    hasObviousMove = true;
+                    return true;
+                }
+            }
+        }else if(lines[i].getValueCount(GRID_VAL_OPONENT) == 2){
+            for(int j = 0; j < grid.getDimension(); j++){
+                if( lines[i][j] == 0 ){
+                    oponentWin = lines[i].indexOf(j);
+                }
+            }
+        }
+    }
+
+    if(oponentWin != GRID_POS_NONE){
+        // There was a space where oponent could win
+        obviousMoveIndex = oponentWin;
+        hasObviousMove = true;
+        return false;
+    }
+    // No obvious move found
+    hasObviousMove = false;
     return false;
 }
 
@@ -85,7 +138,7 @@ void ComputerPlayer::finalizeMove(int& moveIndex, bool &waitForEvent){
         timerID = SDL_AddTimer(1000 /*1 second delay*/, timerCallback, 0);
         waitForEvent = true;
     }else{
-        grid[moveIndex] = GRID_VAL_SELF;
+        grid.set(moveIndex, GRID_VAL_SELF);
         waitForEvent = false;
     }
 }
@@ -129,7 +182,7 @@ int SimpleAI::getNextMove(int* grid)
     for(int lvl = 2; lvl >= 0; lvl--)
     {
 #ifdef BUILD_DEBUG
-        cout << "Level " << lvl << ":\n";
+        cout << "Level " << lvl << ":" << endl;
 #endif // BUILD_DEBUG
         Container<row> rows = checkRows(grid, CPU, lvl);
         for(int i = 0; i < rows.getSize(); i++)

@@ -9,10 +9,15 @@ public:
         int index;
         int offset;
         int* values;
+
+        int* valueCount;
     public:
-        Line(int index=0, int offset=0, int* values=0);
-        int& operator [] (int lineIndex) const;
+        Line(int index=0, int offset=0, int* values=0, int maxValue = 2);
+        int operator [] (int lineIndex) const;
         int indexOf(int lineIndex) const;
+        int getValueCount(int value) const;
+        void updateValueCount(int oldValue, int newValue);
+        void resetValueCount(int value, int dimension, int maxValue = 2);
     };
 
     // Initialize grid with specified initial values and dimension
@@ -20,11 +25,13 @@ public:
 
     // Sets all values to specified value
     void setAllValues(int val = 0);
+    // Sets the given index to the given value
+    void set(int index, int value);
 
     // Get value at specified index
-    int& operator [] (int index);
+    int operator [] (int index);
     // Get value at specified x/y coordinate
-    int& operator () (int x, int y);
+    int operator () (int x, int y);
 
     // Get the dimension of grid
     int getDimension();
@@ -46,6 +53,9 @@ private:
     public: // TEMP
     int * values;
     private: // TEMP
+    // An array of vectors, each of which contains
+    //  all the lines which correspond to a grid index
+    std::vector<int>* valueLines;
     int size;
     int dimension;
 
