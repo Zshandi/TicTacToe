@@ -28,16 +28,24 @@ void ComputerPlayer::getNextMoveOnEvent(int& currentGridIndex, bool& waitForEven
                          int lastOponentGridIndex, int mouseGridIndex,
                          SDL_Event* event){
     if(currentGridIndex == GRID_POS_NONE){
+        // This shouldn't happen
         getNextMove(currentGridIndex, waitForEvent, lastOponentGridIndex, mouseGridIndex);
-    }else{
-        // TODO Have timer checking
+    }else if(event->type == SDL_USEREVENT){
+        grid[currentGridIndex] = GRID_VAL_SELF;
         waitForEvent = false;
+        timerID = 0;
+    }else{
+        waitForEvent = true;
     }
  }
 
 // Called when the user executes an "undo" so as to reset the state of the "player"
 void ComputerPlayer::undo(int lastTurn){
     grid[lastTurn] = 0;
+    if(timerID != 0){
+        SDL_RemoveTimer(timerID);
+        timerID = 0;
+    }
 }
 
 bool ComputerPlayer::isHuman(){ return false; }
@@ -56,6 +64,32 @@ bool ComputerPlayer::getObviousMove(bool& hasObviousMove, int &obviousMoveIndex)
     return false;
 }
 
+Uint32 ComputerPlayer::timerCallback(Uint32 interval, void *param){
+    SDL_Event event;
+
+    event.type = SDL_USEREVENT;
+    event.user = SDL_UserEvent();
+
+    event.user.type = SDL_USEREVENT;
+    event.user.code = 0;
+    event.user.data1 = NULL;
+    event.user.data2 = NULL;
+
+    SDL_PushEvent(&event);
+    return 0;
+}
+
+// Add timer delay if oponent is computer
+void ComputerPlayer::finalizeMove(int& moveIndex, bool &waitForEvent){
+    if( oponent->isComputer() ){
+        timerID = SDL_AddTimer(1000 /*1 second delay*/, timerCallback, 0);
+        waitForEvent = true;
+    }else{
+        grid[moveIndex] = GRID_VAL_SELF;
+        waitForEvent = false;
+    }
+}
+
 // Get the next move with the given data
 // currentGridIndex should be set to the index to be chosen
 // If waitForEvent is set to true, then getNextMoveOnEvent will be called
@@ -68,8 +102,7 @@ void RowComputerPlayer::getNextMove(int& currentGridIndex, bool& waitForEvent,
     processOponentMove(lastOponentGridIndex);
     grid.debugDisplay();
     currentGridIndex = SimpleAI().getNextMove(grid.values);
-    grid[currentGridIndex] = GRID_VAL_SELF;
-    waitForEvent = false;
+    finalizeMove(currentGridIndex, waitForEvent);
 }
 
 int randomMove(int max_v){

@@ -129,6 +129,8 @@ void CApp::undo(){
         playerData[!currentPlayer]->player->isHuman() ){
         undo();
     }
+
+    startNextTurn();
 }
 
 

@@ -8,6 +8,8 @@
 #define GRID_VAL_SELF 1
 #define GRID_VAL_OPONENT 2
 
+
+
 class ComputerPlayer : public Player{
 public:
 
@@ -30,6 +32,8 @@ public:
     virtual void undo(int lastTurn);
 
     virtual bool isHuman();
+
+    static Uint32 timerCallback(Uint32 interval, void *param);
 protected:
     Grid grid;
     bool isOponentFirst;
@@ -43,6 +47,11 @@ protected:
     // If there is, sets hasObviousMove to true and obviousMoveIndex to the grid index
     //  also returns whether or not it will be a winning move
     bool getObviousMove(bool& hasObviousMove, int &obviousMoveIndex);
+
+    // Add timer delay if oponent is computer
+    void finalizeMove(int& moveIndex, bool &waitForEvent);
+private:
+    SDL_TimerID timerID = 0;
 };
 
 class RowComputerPlayer : public ComputerPlayer{
