@@ -17,6 +17,7 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-DBUILD_DEBUG" />
+					<Add option="-DDEBUG_GAME_INFO" />
 					<Add directory="include" />
 					<Add directory="src" />
 				</Compiler>

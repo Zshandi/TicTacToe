@@ -33,6 +33,9 @@ int CApp::OnExecute(){
 }
 
 void CApp::newGame(){
+    #ifdef DEBUG_GAME_INFO
+    cout << endl << " --- NEW GAME --- " << endl << endl;
+    #endif // DEBUG_GAME_INFO
     for(int i = 0; i < 9; i++){
         grid[i] = GRID_VAL_NONE;
     }
@@ -69,6 +72,20 @@ void CApp::finishCurrentTurn(){
 
 // Starts the next turn
 void CApp::startNextTurn(){
+    #ifdef DEBUG_GAME_INFO
+    cout << endl << "--- Player " << currentPlayer << " turn:" << endl;
+    cout << "Current grid:" << endl;
+    for(int i = 0; i < GRID_SIZE; i++){
+        cout << " " << grid[i];
+        if( (i+1)%GRID_INDEX_WIDTH == 0 )
+            cout << endl;
+    }
+    cout << endl << "History:";
+    for(int i = 0; i < history.size(); i++){
+        cout << " " << history[i];
+    }
+    cout << endl << endl;
+    #endif // DEBUG_GAME_INFO
     currentGridIndex = GRID_POS_NONE;
     shouldWaitForEvent = false;
 
