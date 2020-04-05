@@ -54,46 +54,4 @@ private:
     SDL_TimerID timerID = 0;
 };
 
-class RowComputerPlayer : public ComputerPlayer{
-public:
-
-    // Get the next move with the given data
-    // currentGridIndex should be set to the index to be chosen
-    // If waitForEvent is set to true, then getNextMoveOnEvent will be called
-    //  the next time an event is fired
-    //  This also means that currentGridIndex will be highlighted, not selected
-    // lastOponentGridIndex is the index of the last oponent move
-    // mouseGridIndex is the index of the grid space the mouse is currently over
-    virtual void getNextMove(int& currentGridIndex, bool& waitForEvent,
-                             int lastOponentGridIndex, int mouseGridIndex);
-
-protected:
-};
-
-#define PL 2
-#define CPU 1
-
-class AI{
-public:
-    virtual int getNextMove(int* grid) = 0;
-};
-
-
-int randomMove(int max_v);
-
-class RandomAI : public AI{
-public:
-    int getNextMove(int* grid);
-};
-
-class SimpleAI : public AI{
-public:
-    int getNextMove(int* grid);
-};
-
-/*class SimpleComputerPlayer : public Player{
-
-};*/
-
-
 #endif // COMPUTERPLAYER_H_INCLUDED

@@ -47,12 +47,11 @@
 		</Linker>
 		<Unit filename="include/CApp.h" />
 		<Unit filename="include/ComputerPlayer.h" />
-		<Unit filename="include/Container.h" />
 		<Unit filename="include/Grid.h" />
 		<Unit filename="include/HumanPlayer.h" />
 		<Unit filename="include/Player.h" />
 		<Unit filename="include/RandomComputerPlayer.h" />
-		<Unit filename="include/RowChecker.h" />
+		<Unit filename="include/RowComputerPlayer.h" />
 		<Unit filename="include/Texture.h" />
 		<Unit filename="include/utility.h" />
 		<Unit filename="resource/resource.rc">
@@ -64,7 +63,7 @@
 		<Unit filename="src/HumanPlayer.cpp" />
 		<Unit filename="src/Player.cpp" />
 		<Unit filename="src/RandomComputerPlayer.cpp" />
-		<Unit filename="src/RowChecker.cpp" />
+		<Unit filename="src/RowComputerPlayer.cpp" />
 		<Unit filename="src/utility.cpp" />
 		<Extensions>
 			<code_completion />
