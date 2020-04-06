@@ -3,6 +3,7 @@
 #include "RandomComputerPlayer.h"
 #include "RowComputerPlayer.h"
 #include "CApp.h"
+#include <iostream>
 #undef main
 using namespace std;
 
