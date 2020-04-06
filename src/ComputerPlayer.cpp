@@ -13,6 +13,10 @@ void ComputerPlayer::initGame(Player* oponent, bool oponentHasFirstMove){
     this->oponent = oponent;
     this->isOponentFirst = oponentHasFirstMove;
     grid.setAllValues();
+    if(timerID != 0){
+        SDL_RemoveTimer(timerID);
+        timerID = 0;
+    }
 }
 
 // Get the next move with the given data
