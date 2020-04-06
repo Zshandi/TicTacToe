@@ -50,6 +50,7 @@
 		<Unit filename="include/Grid.h" />
 		<Unit filename="include/HumanPlayer.h" />
 		<Unit filename="include/Player.h" />
+		<Unit filename="include/PlayerType.h" />
 		<Unit filename="include/RandomComputerPlayer.h" />
 		<Unit filename="include/RowComputerPlayer.h" />
 		<Unit filename="include/Texture.h" />
@@ -62,6 +63,7 @@
 		<Unit filename="src/Grid.cpp" />
 		<Unit filename="src/HumanPlayer.cpp" />
 		<Unit filename="src/Player.cpp" />
+		<Unit filename="src/PlayerType.cpp" />
 		<Unit filename="src/RandomComputerPlayer.cpp" />
 		<Unit filename="src/RowComputerPlayer.cpp" />
 		<Unit filename="src/utility.cpp" />

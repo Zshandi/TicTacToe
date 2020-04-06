@@ -8,7 +8,6 @@ class CApp;
 
 class HumanPlayer : public Player{
 public:
-    virtual ~HumanPlayer();
 
     // Initialize the current game with the given oponent, and whether they go first
     virtual void initGame(Player* oponent, bool oponentHasFirstMove);

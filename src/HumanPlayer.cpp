@@ -1,9 +1,6 @@
 #include "HumanPlayer.h"
-#include "CApp.h"
 #include "utility.h"
 #include <iostream>
-
-HumanPlayer::~HumanPlayer(){}
 
 // Initialize the current game with the given grid and oponent
 void HumanPlayer::initGame(Player* oponent, bool oponentHasFirstMove){}

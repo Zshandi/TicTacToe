@@ -5,17 +5,20 @@
 #include <SDL.h>
 
 #include "Texture.h"
-#include "ComputerPlayer.h"
-#include "RandomComputerPlayer.h"
-#include "RowComputerPlayer.h"
-#include "HumanPlayer.h"
+#include "Player.h"
+#include "PlayerType.h"
 #include "utility.h"
+
+
 
 class CApp{
 public:
+
+
     struct PlayerData{
         Player* player;
         Texture* graphic;
+        PlayerType type;
     };
 
     // Starts a new game
@@ -28,6 +31,9 @@ public:
     void startNextTurn();
     // Gets the next turn (player 1 or player 2) based on the current turn
     int switchTurn(int turn);
+
+    // Sets the players type to the specified type
+    void setPlayerType(PlayerData* data, PlayerType type);
 
     // Undoes the last move (If playing against computer, last 2 moves
     void undo();

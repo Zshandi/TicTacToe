@@ -1,8 +1,7 @@
 #include<windows.h>
 #include "utility.h"
-#include "RandomComputerPlayer.h"
-#include "RowComputerPlayer.h"
 #include "CApp.h"
+#include "PlayerType.h"
 #include <iostream>
 #undef main
 using namespace std;
@@ -103,6 +102,14 @@ void CApp::startNextTurn(){
     }
 }
 
+
+// Sets the players type to the specified type
+void CApp::setPlayerType(PlayerData* data, PlayerType type){
+    data->type = type;
+    if(data->player != 0) delete data->player;
+    data->player = type.createPlayer();
+}
+
 void CApp::checkWin(){
     for(const int* combo : winCombos){
         if(grid[combo[0]] != GRID_VAL_NONE && grid[combo[0]] == grid[combo[1]] && grid[combo[1]] == grid[combo[2]]){
@@ -187,8 +194,8 @@ bool CApp::OnInit(){
     playerData[0]->graphic = &graphic_x;
     playerData[1]->graphic = &graphic_o;
 
-    playerData[0]->player = new HumanPlayer();
-    playerData[1]->player = new HumanPlayer();
+    setPlayerType(playerData[0], PlayerType());
+    setPlayerType(playerData[1], PlayerType());
 
     newGame();
     return true;
@@ -212,22 +219,20 @@ void CApp::OnEvent(SDL_Event* event){
         }
         //Turn computer player on/off
         if(event->key.keysym.sym == SDLK_F1){
-            if( playerData[1]->player->isComputer() ){
-                delete playerData[1]->player;
-                playerData[1]->player = new HumanPlayer();
-            }else{
-                delete playerData[1]->player;
-                playerData[1]->player = new RowComputerPlayer();
-            }
+            setPlayerType( playerData[0], playerData[0]->type.getNextType() );
             newGame();
             return;
         }else if(event->key.keysym.sym == SDLK_F2){
+            setPlayerType( playerData[1], playerData[1]->type.getNextType() );
+            newGame();
+            return;
+        }else if(event->key.keysym.sym == SDLK_F3){
             PlayerData* temp = playerData[0];
             playerData[0] = playerData[1];
             playerData[1] = temp;
             newGame();
             return;
-        }else if(event->key.keysym.sym == SDLK_F3){
+        }else if(event->key.keysym.sym == SDLK_F4){
             Texture* temp = playerData[0]->graphic;
             playerData[0]->graphic = playerData[1]->graphic;
             playerData[1]->graphic = temp;
