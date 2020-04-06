@@ -6,7 +6,8 @@
 
 #include "Texture.h"
 #include "ComputerPlayer.h"
-#include "RowChecker.h"
+#include "RandomComputerPlayer.h"
+#include "RowComputerPlayer.h"
 #include "HumanPlayer.h"
 #include "utility.h"
 
