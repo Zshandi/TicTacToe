@@ -1,7 +1,6 @@
 #include "ComputerPlayer.h"
 #include <random>
 #include <chrono>
-#include "RowChecker.h"
 
 #ifdef BUILD_DEBUG
 #include <iostream>
