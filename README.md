@@ -1,6 +1,6 @@
 # TicTacToe
 
-This is where I'll put the description
+A C++ learning project from when I was young. I followed this tutorial: http://www.sdltutorials.com/sdl-tutorial-tic-tac-toe but I added some computer player code. Then I recently decided to revisit it after going to university, and clean it up, adding some more functionality. I also wanted to create an unbeatable AI, which I have started but not yet finished.
 
 # Setting up on new machine
 
