@@ -1,6 +1,6 @@
 # TicTacToe
 
-A C++ learning project from when I was young. I followed this tutorial: http://www.sdltutorials.com/sdl-tutorial-tic-tac-toe but I added some computer player code. Then I recently decided to revisit it after going to university, and clean it up, adding some more functionality. I also wanted to create an unbeatable AI, which I have started but not yet finished.
+A C++ learning project from when I was young. I followed this tutorial: http://www.sdltutorials.com/sdl-tutorial-tic-tac-toe but I added some computer player code. Then I recently decided to revisit it after going to university, and clean it up, adding some more functionality. I also wanted to create an unbeatable AI, which is currently unbeatable as long as it goes first.
 
 # Setting up on new machine
 
